@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Wave</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+		<style>
+			body {
+				background-color: #ccc;
+				color: #999;
+			}
+			a {
+				color: #080;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="info"><br/>
+			-Oscar Hong<br/>
+		</div>
+
+		<script type="module">
+
+			import * as THREE from '../build/three.module.js';
+			import Stats from './jsm/libs/stats.module.js';
+			import { GUI } from './jsm/libs/dat.gui.module.js';
+
+			import { OrbitControls } from './jsm/controls/OrbitControls.js';
+
+      let camera, scene, renderer;
+			var geometry, material, mesh;
+			var controls;
+			var step = 0;
+			var boxes = [];
+			const windowHalf = new THREE.Vector2( window.innerWidth / 2, window.innerHeight / 2 );
+
+			init();
+			animate();
+
+function init() {
+
+	camera = new THREE.PerspectiveCamera( 65, window.innerWidth / window.innerHeight, 0.01, 50 );
+	camera.position.z = 46;
+
+	scene = new THREE.Scene();
+
+	geometry = new THREE.BoxGeometry( 1, 1, 1 );
+
+
+	var numBoxes = 10;
+	for (let x = -numBoxes; x <= numBoxes; x++) {
+  	for (let y = -numBoxes; y <= numBoxes; y++) {
+    	var material = new THREE.MeshNormalMaterial( );
+    	var cube = new THREE.Mesh( geometry, material );
+    	cube.position.x = x * 1.1;
+    	cube.position.y = y * 1.1;
+    	boxes.push(cube);
+    	scene.add(cube);
+  	}
+}
+	//change place of box
+	for (var box of boxes) {
+	var x = box.position.x;
+	var y = box.position.y;
+
+	box.position.z = Math.abs(x) + Math.abs(y);
+
+	}
+
+	renderer = new THREE.WebGLRenderer( { antialias: true } );
+
+	controls = new OrbitControls( camera, renderer.domElement );
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+
+}
+
+
+
+function animate() {
+
+	requestAnimationFrame( animate );
+	controls.update();
+	for (var box of boxes) {
+		step += 0.0001;
+
+		var x = box.position.x;
+		var y = box.position.y;
+
+		box.position.z = Math.sin(step + Math.sqrt(x*x + y*y));
+
+	}
+	renderer.render( scene, camera );
+
+
+}
+
+
+    </script>
+  </body>
+</html>
